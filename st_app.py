@@ -4,17 +4,14 @@ import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Define the Rastrigin function
 def function(x):
     return x**2 - 10 * torch.cos(2 * np.pi * x) + 10
 
 x = torch.randn(1, requires_grad=True)
 
-# Streamlit app
 def main():
-    st.title("Rastrigin Function Optimization")
+    st.title("Function Optimization")
 
-    # Sidebar options
     optimizer_options = ["SGD", "Adam", "RMSprop"]
     selected_optimizer = st.sidebar.selectbox("Select Optimizer", optimizer_options)
 
@@ -36,12 +33,10 @@ def main():
     st.write(f"Number of Epochs: {num_epochs}")
     st.write(f"Learning Rate: {learning_rate}")
 
-    # Create a single figure and axes for both plots
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(24, 12))
 
-    col1, col2 = st.columns(2)  # Separate the columns for visualization
+    col1, col2 = st.columns(2)
 
-    # Initialize plots
     ax1.set_xlabel("Epoch")
     ax1.set_ylabel("Loss")
     ax1.set_title("Loss Optimization")
@@ -61,7 +56,6 @@ def main():
 
         losses.append(loss.item())
 
-        # Update the plots
         ax1.clear()
         ax1.plot(losses)
         ax1.set_xlabel("Epoch")
@@ -79,18 +73,14 @@ def main():
         ax2.set_ylabel("f(x)")
         ax2.legend()
 
-        plt.pause(0.01)  # Pause to allow time for the plot to update
+        plt.pause(0.01)
 
     final_loss = function(x).item()
     st.write(f"Final Loss: {final_loss:.4f}")
 
-    # Display the final updated figure within each column
     with col1:
         st.pyplot(fig)
 
-    with col2:
-        st.pyplot(fig)
-
 if __name__ == "__main__":
-    losses = []  # Initialize losses list
+    losses = []
     main()
