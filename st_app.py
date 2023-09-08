@@ -33,20 +33,8 @@ def main():
     st.write(f"Number of Epochs: {num_epochs}")
     st.write(f"Learning Rate: {learning_rate}")
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(24, 12))
-
-    col1, col2 = st.columns(2)
-
-    ax1.set_xlabel("Epoch")
-    ax1.set_ylabel("Loss")
-    ax1.set_title("Loss Optimization")
-
-    x_vals = torch.linspace(-10, 10, 100)
-    y_vals = function(x_vals)
-    ax2.plot(x_vals.numpy(), y_vals.numpy(), label="Function Curve")
-    ax2.set_xlabel("x")
-    ax2.set_ylabel("f(x)")
-    ax2.legend()
+    losses = []
+    x_values = []
 
     for epoch in range(num_epochs):
         optimizer.zero_grad()
@@ -55,32 +43,31 @@ def main():
         optimizer.step()
 
         losses.append(loss.item())
-
-        ax1.clear()
-        ax1.plot(losses)
-        ax1.set_xlabel("Epoch")
-        ax1.set_ylabel("Loss")
-        ax1.set_title("Loss Optimization")
-
-        ax2.clear()
-        ax2.plot(x_vals.numpy(), y_vals.numpy(), label="Function Curve")
-        ax2.scatter(x.item(), function(x).item(), color="red", marker="x", label="Optimization Variable (x)")
-        ax2.annotate(f'x = {x.item():.4f}\nf(x) = {function(x).item():.4f}',
-                     xy=(x.item(), function(x).item()), xycoords='data',
-                     xytext=(-50, 30), textcoords='offset points',
-                     arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
-        ax2.set_xlabel("x")
-        ax2.set_ylabel("f(x)")
-        ax2.legend()
-
-        plt.pause(0.01)
+        x_values.append(x.item())
 
     final_loss = function(x).item()
     st.write(f"Final Loss: {final_loss:.4f}")
 
-    with col1:
-        st.pyplot(fig)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(24, 12))
+
+    ax1.set_xlabel("Epoch")
+    ax1.set_ylabel("Loss")
+    ax1.set_title("Loss Optimization")
+    ax1.plot(losses)
+
+    x_vals = torch.linspace(-10, 10, 100)
+    y_vals = function(x_vals)
+    ax2.plot(x_vals.numpy(), y_vals.numpy(), label="Function Curve")
+    ax2.scatter(x_values, [function(torch.tensor([x])).item() for x in x_values], color="red", marker="x", label="Optimization Variable (x)")
+    ax2.annotate(f'x = {x.item():.4f}\nf(x) = {function(x).item():.4f}',
+                 xy=(x.item(), function(x).item()), xycoords='data',
+                 xytext=(-50, 30), textcoords='offset points',
+                 arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+    ax2.set_xlabel("x")
+    ax2.set_ylabel("f(x)")
+    ax2.legend()
+
+    st.pyplot(fig)
 
 if __name__ == "__main__":
-    losses = []
     main()
