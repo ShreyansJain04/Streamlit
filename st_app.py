@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 def function(x):
     return x**2 - 10 * torch.cos(2 * np.pi * x) + 10
-
+torch.manual_seed(42)
 x = torch.randn(1, requires_grad=True)
 
 def main():
