@@ -74,61 +74,6 @@ def main():
 
     st.pyplot(fig)
 
-    # FuncAnimation
-    num_iterations = len(x_values)
-    interval = 200
-
-    fig, ax = plt.subplots()
-
-    def update(frame):
-        ax.clear()
-        ax.plot(x_vals.numpy(), y_vals.numpy(), label="Function Curve")
-        ax.scatter(x_values[:frame], [function(torch.tensor([x])).item() for x in x_values[:frame]], color="red", marker="x", label="Optimization Variable (x)")
-        ax.annotate(f'x = {x_values[frame]:.4f}\nf(x) = {function(torch.tensor([x_values[frame]])).item():.4f}',
-                     xy=(x_values[frame], function(torch.tensor([x_values[frame]])).item()), xycoords='data',
-                     xytext=(-50, 30), textcoords='offset points',
-                     arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
-        ax.set_xlabel("x")
-        ax.set_ylabel("f(x)")
-        ax.legend()
-
-        # Convert the figure to HTML string
-        fig.canvas.draw()
-        image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-        image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-        image_str = f'<img src="data:image/png;base64,{base64.b64encode(image).decode()}" />'
-        return image_str
-
-    st.markdown('<div id="animation"></div>', unsafe_allow_html=True)
-
-    # Render the animation using JavaScriptI apologize for the incomplete response. Here's the continuation and completion of the code:
-
-    st.markdown(
-        f"""
-        <script>
-        var index = 0;
-        var interval = {interval};
-        var frames = [];
-
-        function updateAnimation() {{
-            if (index < {num_iterations}) {{
-                var img = document.createElement('img');
-                img.src = 'data:image/png;base64,' + frames[index];
-                index++;
-                document.getElementById('animation').appendChild(img);
-                setTimeout(updateAnimation, interval);
-            }}
-        }}
-
-        setTimeout(updateAnimation, interval);
-        </script>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Save the animation frames
-    anim = FuncAnimation(fig, lambda frame: frames.append(update(frame)), frames=num_iterations, interval=interval)
-    anim.save('animation.gif', writer='pillow')
 
 if __name__ == "__main__":
     main()
